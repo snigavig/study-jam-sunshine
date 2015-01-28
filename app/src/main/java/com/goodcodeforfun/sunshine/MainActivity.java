@@ -1,5 +1,6 @@
 package com.goodcodeforfun.sunshine;
 
+import android.content.res.Resources;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -64,16 +66,15 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            ArrayList<String> arrayListForecast = new ArrayList<>();
-            arrayListForecast.add("Today - Sunny - 82/64");
-            arrayListForecast.add("Tomorrow - Foggy - 78/63");
-            arrayListForecast.add("Tuesday - Rainy - 83/63");
-            arrayListForecast.add("Wednesday - Sunny - 78/66");
-            arrayListForecast.add("Thursday - Foggy - 84/61");
-            arrayListForecast.add("Friday - Foggy - 76/65");
-
-            ArrayAdapter<String> arrayAdapterForecast = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, arrayListForecast);
+            Resources res = getResources();
+            String[] arrayForecast = res.getStringArray(R.array.forecastDummyList);
+            ArrayList<String> arrayListForecast = new ArrayList<>(Arrays.asList(arrayForecast));
+            ArrayAdapter<String> arrayAdapterForecast = new ArrayAdapter<>(
+                    getActivity(),
+                    R.layout.list_item_forecast,
+                    R.id.list_item_forecast_textview,
+                    arrayListForecast
+            );
 
             ListView listViewForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
             listViewForecast.setAdapter(arrayAdapterForecast);
