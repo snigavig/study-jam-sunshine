@@ -2,9 +2,10 @@
 <resources>
 
     <string name="app_name">Sunshine</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world" translatable="false">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string-array name="forecastDummyList">
+
+    <string-array name="forecastDummyList" translatable="false">
         <item>Today - Sunny - 82/64</item>
         <item>Tomorrow - Foggy - 78/63</item>
         <item>Tuesday - Rainy - 83/63</item>
@@ -13,4 +14,6 @@
         <item>Friday - Foggy - 76/65</item>
     </string-array>
 
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="action_refresh" translatable="false">Refresh</string>
 </resources>
