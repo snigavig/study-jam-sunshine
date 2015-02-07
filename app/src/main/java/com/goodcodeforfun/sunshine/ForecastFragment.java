@@ -1,5 +1,6 @@
 package com.goodcodeforfun.sunshine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,8 +10,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,11 +49,6 @@ public class ForecastFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         if (id == R.id.action_refresh) {
             new FetchForecastTask().execute("Kiev", null, null);
             return true;
@@ -79,6 +78,19 @@ public class ForecastFragment extends Fragment {
         );
         ListView listViewForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
         listViewForecast.setAdapter(arrayAdapterForecast);
+
+        listViewForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //TextView forecastItemView = (TextView) view;
+                //Toast.makeText(getActivity(), forecastItemView.getText(),Toast.LENGTH_SHORT).show();
+
+                Intent startDetailsActivityIntent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, arrayAdapterForecast.getItem(position));
+                startActivity(startDetailsActivityIntent);
+            }
+        });
 
         return rootView;
     }
