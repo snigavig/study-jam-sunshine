@@ -31,6 +31,11 @@ public class SettingsActivity extends PreferenceActivity
         // TODO: Add preferences
         // In the simplified UI, fragments are not used at all and we instead
         // use the older PreferenceActivity APIs.
+
+        addPreferencesFromResource(R.xml.pref_general);
+        bindPreferenceSummaryToValue(findPreference("location"));
+        bindPreferenceSummaryToValue(findPreference("unit_system"));
+
     }
 
     /**

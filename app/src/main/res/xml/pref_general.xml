@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="location"
+        android:title="@string/pref_title_location"
+        android:defaultValue="@string/pref_default_location"
+        android:selectAllOnFocus="true"
+        android:inputType="textPostalAddress"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <ListPreference
+        android:title="@string/pref_title_unit_system"
+        android:key="@string/pref_key_unit_system"
+        android:defaultValue="@string/pref_default_unit_system"
+        android:entries="@array/unit_systems"
+        android:entryValues="@array/v_unit_systems"/>
+
+</PreferenceScreen>
