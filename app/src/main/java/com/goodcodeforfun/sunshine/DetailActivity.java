@@ -1,10 +1,10 @@
 package com.goodcodeforfun.sunshine;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +17,6 @@ import android.widget.TextView;
 public class DetailActivity extends ActionBarActivity {
 
     private static String forecastString;
-    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,7 @@ public class DetailActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
 
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         mShareActionProvider.setShareIntent(getShareIntent());
         return true;
     }
@@ -66,6 +65,7 @@ public class DetailActivity extends ActionBarActivity {
         intent.setType("text/plain");
         String shareString = forecastString + " #SunshineApp";
         intent.putExtra(Intent.EXTRA_TEXT, shareString);
+        //noinspection deprecation
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         return intent;
     }

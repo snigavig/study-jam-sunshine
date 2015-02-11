@@ -1,6 +1,5 @@
 package com.goodcodeforfun.sunshine;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -16,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,7 +99,6 @@ public class ForecastFragment extends Fragment {
 
 
     public void runFetchTask() {
-        Toast.makeText(getActivity(),"yoo", Toast.LENGTH_SHORT).show();
         new FetchForecastTask().execute(
                 prefs.getString(
                         getActivity().getResources().getString(R.string.pref_key_location),

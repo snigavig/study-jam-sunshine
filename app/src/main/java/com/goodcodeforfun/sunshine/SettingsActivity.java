@@ -1,13 +1,10 @@
 package com.goodcodeforfun.sunshine;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
-import android.view.KeyEvent;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -32,8 +29,11 @@ public class SettingsActivity extends PreferenceActivity
         // In the simplified UI, fragments are not used at all and we instead
         // use the older PreferenceActivity APIs.
 
+        //noinspection deprecation
         addPreferencesFromResource(R.xml.pref_general);
+        //noinspection deprecation
         bindPreferenceSummaryToValue(findPreference("location"));
+        //noinspection deprecation
         bindPreferenceSummaryToValue(findPreference("unit_system"));
 
     }
