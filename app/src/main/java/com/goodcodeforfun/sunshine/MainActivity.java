@@ -1,10 +1,17 @@
 package com.goodcodeforfun.sunshine;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.support.v7.app.ActionBarActivity;
+import android.net.Uri;
+import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +34,8 @@ import java.util.Arrays;
 
 public class MainActivity extends ActionBarActivity {
 
+    public SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +45,9 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,6 +69,27 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_show_map) {
+            showMap();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showMap() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("geo")
+                .appendPath("0.0")
+                .appendQueryParameter("q", prefs.getString(
+                        getResources().getString(R.string.pref_key_location),
+                        getResources().getString(R.string.pref_default_location)));
+
+        intent.setData(uriBuilder.build());
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Sorry, no application to show a map", Toast.LENGTH_SHORT).show();
+        }
     }
 }

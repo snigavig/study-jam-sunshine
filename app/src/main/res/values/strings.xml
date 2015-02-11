@@ -27,6 +27,8 @@
     <string name="pref_title_unit_system">Unit system</string>
     <string name="pref_key_unit_system">unit_system</string>
     <string name="pref_default_unit_system">m</string>
+    <string name="action_show_map">Show map</string>
+    <string name="Share">Share</string>
 
     <string-array name="unit_systems">
         <item>Metric</item>
