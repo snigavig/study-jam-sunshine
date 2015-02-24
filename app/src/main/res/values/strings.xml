@@ -29,6 +29,8 @@
     <string name="pref_default_unit_system">m</string>
     <string name="action_show_map">Show map</string>
     <string name="Share">Share</string>
+    <string name="pref_units_metric">metric</string>
+    <string name="pref_units_imperial">imperial</string>
 
     <string-array name="unit_systems">
         <item>Metric</item>
