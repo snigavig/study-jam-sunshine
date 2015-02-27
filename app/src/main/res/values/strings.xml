@@ -21,7 +21,7 @@
 
     <string name="pref_title_location">Location</string>
     <string name="pref_key_location">location</string>
-    <string name="pref_default_location">Kiev</string>
+    <string name="pref_default_location">08324</string>
 
 
     <string name="pref_title_unit_system">Unit system</string>
