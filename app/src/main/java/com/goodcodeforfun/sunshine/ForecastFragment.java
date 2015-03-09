@@ -112,7 +112,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onStart() {
         super.onStart();
-        runFetchTask(getActivity());
     }
 
     @Override
@@ -175,5 +174,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         arrayAdapterForecast.swapCursor(null);
+    }
+
+    void onLocationChanged( ) {
+        runFetchTask(getActivity());
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 }
