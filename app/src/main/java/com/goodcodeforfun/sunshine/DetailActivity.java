@@ -63,7 +63,9 @@ public class DetailActivity extends ActionBarActivity {
                     .commit();
         }
         Intent intent = getIntent();
-        forecastString = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (intent != null) {
+            forecastString = intent.getDataString();
+        }
     }
 
 
