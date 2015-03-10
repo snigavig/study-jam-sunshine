@@ -13,7 +13,7 @@ import android.widget.Toast;
 import static android.widget.Toast.*;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     public SharedPreferences prefs;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -36,6 +36,10 @@ public class MainActivity extends ActionBarActivity {
             mTwoPane = false;
         }
 
+        ForecastFragment forecastFragment =  ((ForecastFragment)getSupportFragmentManager()
+            .findFragmentById(R.id.fragment_forecast));
+        forecastFragment.setUseTodayLayout(!mTwoPane);
+
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
@@ -44,9 +48,9 @@ public class MainActivity extends ActionBarActivity {
         super.onResume();
         String location = Utility.getPreferredLocation( this );
         if (location != null && !location.equals(mLocation)) {
-            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            if ( null != ff ) {
-                ff.onLocationChanged();
+            DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onLocationChanged(location);
             }
             mLocation = location;
         }
@@ -93,6 +97,23 @@ public class MainActivity extends ActionBarActivity {
             startActivity(intent);
         } else {
             makeText(this, "Sorry, no application to show a map", LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
+                .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                .setData(contentUri);
+            startActivity(intent);
         }
     }
 }

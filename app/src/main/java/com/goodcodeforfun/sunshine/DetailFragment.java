@@ -2,6 +2,7 @@ package com.goodcodeforfun.sunshine;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -26,9 +27,10 @@ import com.goodcodeforfun.sunshine.data.WeatherContract;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 1;
-
+    static final String DETAIL_URI = "URI";
     private static String forecastString;
     public static ShareActionProvider mShareActionProvider;
+    private Uri mUri;
 
     private static final String[] FORECAST_COLUMNS = {
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -39,7 +41,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
     private static final int COL_WEATHER_ID = 0;
     private static final int COL_WEATHER_DATE = 1;
@@ -50,6 +53,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int COL_WEATHER_WIND_SPEED = 6;
     private static final int COL_WEATHER_DEGREES = 7;
     private static final int COL_WEATHER_PRESSURE = 8;
+    private static final int COL_WEATHER_CONDITION_ID = 9;
 
     public ImageView iconView;
     public TextView dateView;
@@ -91,33 +95,36 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        iconView = (ImageView) rootView.findViewById(R.id.list_item_icon);
-        dateView = (TextView) rootView.findViewById(R.id.list_item_date_textview);
-        descView = (TextView) rootView.findViewById(R.id.list_item_forecast_textview);
-        highView = (TextView) rootView.findViewById(R.id.list_item_high_textview);
-        lowView = (TextView) rootView.findViewById(R.id.list_item_low_textview);
-        dateFullView = (TextView) rootView.findViewById(R.id.list_item_date_full_textview);
-        humidityView = (TextView) rootView.findViewById(R.id.list_item_humidity_textview);
-        windView = (TextView) rootView.findViewById(R.id.list_item_wind_textview);
-        pressureView = (TextView) rootView.findViewById(R.id.list_item_pressure_textview);
+        iconView = (ImageView) rootView.findViewById(R.id.detail_icon);
+        dateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        descView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
+        highView = (TextView) rootView.findViewById(R.id.detail_high_textview);
+        lowView = (TextView) rootView.findViewById(R.id.detail_low_textview);
+        dateFullView = (TextView) rootView.findViewById(R.id.detail_day_textview);
+        humidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+        windView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+        pressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
         return rootView;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null || intent.getData() == null) {
-            return null;
-        }
-        return new CursorLoader(
-                getActivity(),
-                intent.getData(),
-                FORECAST_COLUMNS,
-                null,
-                null,
-                null
-        );
+         if ( mUri != null ) {
+             return new CursorLoader(
+                     getActivity(),
+                     mUri,
+                     FORECAST_COLUMNS,
+                     null,
+                     null,
+                     null
+             );
+         }
+        return null;
     }
 
     @Override
@@ -140,12 +147,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         String wind = Utility.getFormattedWind(
                 getActivity(), data.getFloat(COL_WEATHER_WIND_SPEED), data.getFloat(COL_WEATHER_DEGREES));
         String pressure = String.format(
-                getActivity().getResources().getString(R.string.format_pressure), data.getDouble(COL_WEATHER_HUMIDITY));
+                getActivity().getResources().getString(R.string.format_pressure), data.getDouble(COL_WEATHER_PRESSURE));
 
         forecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
 
-        int weatherId = data.getInt(COL_WEATHER_ID);
+        int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+
         dateView.setText(dateString);
         descView.setText(weatherDescription);
         highView.setText(high);
@@ -173,6 +181,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         //noinspection deprecation
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         return intent;
+    }
+
+    void onLocationChanged( String newLocation ) {
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
     }
 
 }

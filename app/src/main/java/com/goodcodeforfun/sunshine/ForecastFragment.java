@@ -45,7 +45,9 @@ import java.util.Date;
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
-
+    private ListView mListView;
+    private int mPosition = ListView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
     private static final int LOADER_ID = 0;
 
     private static final String[] FORECAST_COLUMNS = {
@@ -82,6 +84,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastAdapter arrayAdapterForecast;
     public ArrayList<String> arrayListForecast;
     public SharedPreferences prefs;
+
+    private boolean mUseTodayLayout;
+
+    public interface Callback {
+         /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+         public void onItemSelected(Uri dateUri);
+    }
 
     public ForecastFragment() {
     }
@@ -120,6 +131,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         super.onActivityCreated(savedInstanceState);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,26 +140,31 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         arrayAdapterForecast = new ForecastAdapter(getActivity(), null, 0);
 
-        ListView listViewForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listViewForecast.setAdapter(arrayAdapterForecast);
-
-        listViewForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setAdapter(arrayAdapterForecast);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                    ((Callback) getActivity())
+                            .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                                     locationSetting, cursor.getLong(COL_WEATHER_DATE)
                             ));
-                    startActivity(intent);
                 }
+                mPosition = position;
             }
         });
+
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+        arrayAdapterForecast.setUseTodayLayout(mUseTodayLayout);
 
         return rootView;
     }
@@ -175,6 +193,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         arrayAdapterForecast.swapCursor(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mListView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override
@@ -182,8 +205,26 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         arrayAdapterForecast.swapCursor(null);
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (arrayAdapterForecast != null) {
+            arrayAdapterForecast.setUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
     void onLocationChanged( ) {
         runFetchTask();
         getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+        // so check for that before storing.
+        if (mPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 }
