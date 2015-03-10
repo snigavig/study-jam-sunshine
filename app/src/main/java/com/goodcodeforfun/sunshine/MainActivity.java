@@ -79,8 +79,8 @@ public class MainActivity extends ActionBarActivity {
         uriBuilder.scheme("geo")
                 .appendPath("0.0")
                 .appendQueryParameter("q", prefs.getString(
-                        getResources().getString(R.string.pref_key_location),
-                        getResources().getString(R.string.pref_default_location)));
+                        getResources().getString(R.string.pref_location_key),
+                        getResources().getString(R.string.pref_location_default)));
 
         intent.setData(uriBuilder.build());
         if (intent.resolveActivity(getPackageManager()) != null) {

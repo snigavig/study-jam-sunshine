@@ -94,7 +94,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            runFetchTask(getActivity());
+            runFetchTask();
             return true;
         }
 
@@ -152,18 +152,24 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
-    public void runFetchTask(Context c) {
-        new FetchWeatherTask(c).execute(
-                prefs.getString(
-                        getActivity().getResources().getString(R.string.pref_key_location),
-                        getActivity().getResources().getString(R.string.pref_default_location)));
+    public void runFetchTask() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+        weatherTask.execute(location);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String location = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, System.currentTimeMillis());
-        return new CursorLoader(getActivity(), weatherForLocationUri, FORECAST_COLUMNS, null, null, WeatherContract.WeatherEntry.COLUMN_DATE + " ASC");
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+        return new CursorLoader(getActivity(),
+                weatherForLocationUri,
+                FORECAST_COLUMNS,
+                null,
+                null,
+                sortOrder);
     }
 
     @Override
@@ -177,7 +183,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     void onLocationChanged( ) {
-        runFetchTask(getActivity());
+        runFetchTask();
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 }
