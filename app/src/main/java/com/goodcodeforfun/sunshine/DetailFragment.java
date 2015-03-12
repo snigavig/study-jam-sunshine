@@ -153,6 +153,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+        iconView.setContentDescription(weatherDescription);
 
         dateView.setText(dateString);
         descView.setText(weatherDescription);
