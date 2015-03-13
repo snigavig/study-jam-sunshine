@@ -107,6 +107,11 @@
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:textAppearance="?android:textAppearanceLarge" />
+
+            <com.goodcodeforfun.sunshine.MyView
+                android:layout_height="120dp"
+                android:layout_width="120dp"
+                android:id="@+id/rotor_view"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

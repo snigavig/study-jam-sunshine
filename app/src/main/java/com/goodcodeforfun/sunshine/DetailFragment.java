@@ -64,6 +64,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public TextView humidityView;
     public TextView windView;
     public TextView pressureView;
+    public MyView rotorView;
     public DetailFragment() {
         setHasOptionsMenu(true);
     }
@@ -109,6 +110,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         humidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
         windView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
         pressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
+        rotorView = (MyView) rootView.findViewById(R.id.rotor_view);
         return rootView;
     }
 
@@ -163,6 +165,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         humidityView.setText(humidity);
         windView.setText(wind);
         pressureView.setText(pressure);
+        rotorView.setSpeed(data.getFloat(COL_WEATHER_WIND_SPEED));
 
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(getShareIntent());
