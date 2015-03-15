@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
-public class MyView extends View{
+public class MyView extends View {
     public MyView(Context context) {
         super(context);
         init();
@@ -92,7 +92,7 @@ public class MyView extends View{
 
     @Override
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        //super.dispatchPopulateAccessibilityEvent(event);
+        super.dispatchPopulateAccessibilityEvent(event);
         event.getText().add(String.valueOf(mSpeed));
         return true;
     }

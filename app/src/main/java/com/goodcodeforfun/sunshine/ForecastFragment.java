@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.goodcodeforfun.sunshine.data.WeatherContract;
+import com.goodcodeforfun.sunshine.service.SunshineService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,9 +172,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     public void runFetchTask() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+
+        //FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
-        weatherTask.execute(location);
+        //weatherTask.execute(location);
+        Intent intent = new Intent(getActivity(), SunshineService.class);
+        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+        getActivity().startService(intent);
     }
 
     @Override
