@@ -1,12 +1,11 @@
 package com.goodcodeforfun.sunshine;
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,31 +13,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.goodcodeforfun.sunshine.data.WeatherContract;
-import com.goodcodeforfun.sunshine.service.SunshineService;
+import com.goodcodeforfun.sunshine.sync.SunshineSyncAdapter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 /**
@@ -47,6 +32,8 @@ import java.util.Date;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private ListView mListView;
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
     private int mPosition = ListView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
     private static final int LOADER_ID = 0;
@@ -173,12 +160,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void runFetchTask() {
 
-        //FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        String location = Utility.getPreferredLocation(getActivity());
-        //weatherTask.execute(location);
-        Intent intent = new Intent(getActivity(), SunshineService.class);
-        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
-        getActivity().startService(intent);
+//        //FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+//        String location = Utility.getPreferredLocation(getActivity());
+//        //weatherTask.execute(location);
+//
+//        alarmMgr = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+//        Intent pendingIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+//        pendingIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
+//        alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, pendingIntent, PendingIntent.FLAG_ONE_SHOT);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(System.currentTimeMillis());
+//        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 5000, alarmIntent);
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override

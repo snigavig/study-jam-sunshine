@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import static android.widget.Toast.*;
+import com.goodcodeforfun.sunshine.sync.SunshineSyncAdapter;
+
+import static android.widget.Toast.LENGTH_SHORT;
+import static android.widget.Toast.makeText;
 
 
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
@@ -42,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         forecastFragment.setUseTodayLayout(!mTwoPane);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
