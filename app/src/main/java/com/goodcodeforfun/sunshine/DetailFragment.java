@@ -139,11 +139,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 data.getLong(COL_WEATHER_DATE));
         String weatherDescription =
                 data.getString(COL_WEATHER_DESC);
-        boolean isMetric = Utility.isMetric(getActivity());
-        String high = Utility.formatTemperature(
-                getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-        String low = Utility.formatTemperature(
-                getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+        String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP));
+        String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP));
         String humidity = String.format(
                 getActivity().getResources().getString(R.string.format_humidity), data.getDouble(COL_WEATHER_HUMIDITY));
         String wind = Utility.getFormattedWind(

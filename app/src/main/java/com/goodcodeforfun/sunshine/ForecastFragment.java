@@ -3,6 +3,7 @@ package com.goodcodeforfun.sunshine;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,6 +25,9 @@ import com.goodcodeforfun.sunshine.data.WeatherContract;
 import com.goodcodeforfun.sunshine.sync.SunshineSyncAdapter;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_SHORT;
+import static android.widget.Toast.makeText;
 
 
 /**
@@ -95,6 +99,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (id == R.id.action_refresh) {
             runFetchTask();
             return true;
+        }
+
+        if (id == R.id.action_show_map) {
+            showMap();
         }
 
         return super.onOptionsItemSelected(item);
@@ -225,5 +233,29 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             outState.putInt(SELECTED_KEY, mPosition);
         }
         super.onSaveInstanceState(outState);
+    }
+
+
+    public void showMap() {
+        if ( null != arrayAdapterForecast ) {
+            Cursor c = arrayAdapterForecast.getCursor();
+            if ( null != c ) {
+                c.moveToPosition(0);
+                String locationLat = c.getString(COL_COORD_LAT);
+                String locationLon = c.getString(COL_COORD_LONG);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri.Builder uriBuilder = new Uri.Builder();
+                uriBuilder.scheme("geo")
+                        .appendPath(locationLat + "," + locationLon);
+
+                intent.setData(uriBuilder.build());
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    makeText(getActivity(), "Sorry, no application to show a map", LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

@@ -80,28 +80,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             return true;
         }
 
-        if (id == R.id.action_show_map) {
-            showMap();
-        }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    public void showMap() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri.Builder uriBuilder = new Uri.Builder();
-        uriBuilder.scheme("geo")
-                .appendPath("0.0")
-                .appendQueryParameter("q", prefs.getString(
-                        getResources().getString(R.string.pref_location_key),
-                        getResources().getString(R.string.pref_location_default)));
-
-        intent.setData(uriBuilder.build());
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            makeText(this, "Sorry, no application to show a map", LENGTH_SHORT).show();
-        }
     }
 
     @Override
