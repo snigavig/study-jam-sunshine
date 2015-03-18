@@ -44,7 +44,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
-    private static final int COL_WEATHER_ID = 0;
+
     private static final int COL_WEATHER_DATE = 1;
     private static final int COL_WEATHER_DESC = 2;
     private static final int COL_WEATHER_MAX_TEMP = 3;
@@ -188,8 +188,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Uri uri = mUri;
         if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
-            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
-            mUri = updatedUri;
+            mUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
             getLoaderManager().restartLoader(LOADER_ID, null, this);
         }
     }

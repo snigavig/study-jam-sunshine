@@ -11,10 +11,6 @@ import android.view.MenuItem;
 
 import com.goodcodeforfun.sunshine.sync.SunshineSyncAdapter;
 
-import static android.widget.Toast.LENGTH_SHORT;
-import static android.widget.Toast.makeText;
-
-
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     public SharedPreferences prefs;

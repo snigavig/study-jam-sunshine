@@ -48,7 +48,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-    private static final int WEATHER_NOTIFICATION_ID = 3004;
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
         WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
         WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
@@ -112,7 +111,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
@@ -120,7 +119,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                 // But it does make debugging a *lot* easier if you print out the completed
                 // buffer for debugging.
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
 
             forecastJsonStr = buffer.toString();
@@ -254,7 +253,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+            Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
             // OWM returns daily forecasts based upon the local time of the city that is being
             // asked for, which means that we need to know the GMT offset to translate this data
@@ -496,8 +495,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     //refreshing last sync
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putLong(lastNotificationKey, System.currentTimeMillis());
-                    editor.commit();
+                    editor.apply();
                 }
+                cursor.close();
             }
         }
     }

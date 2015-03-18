@@ -23,6 +23,7 @@ import android.text.format.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utility {
     public static String getPreferredLocation(Context context) {
@@ -41,7 +42,6 @@ public class Utility {
     public static String formatTemperature(Context context, double temperature) {
         // Data stored in Celsius by default.  If user prefers to see in Fahrenheit, convert
         // the values here.
-        String suffix = "\u00B0";
         if (!isMetric(context)) {
             temperature = (temperature * 1.8) + 32;
         }
@@ -53,10 +53,6 @@ public class Utility {
         Date date = new Date(dateInMillis);
         return DateFormat.getDateInstance().format(date);
     }
-
-    // Format used for storing dates in the database.  ALso used for converting those strings
-    // back into date objects for comparison/processing.
-    public static final String DATE_FORMAT = "yyyyMMdd";
 
     /**
      * Helper method to convert the database representation of the date into something to display
@@ -87,13 +83,13 @@ public class Utility {
             return String.format(context.getString(
                     formatId,
                     today,
-                    getFormattedMonthDay(context, dateInMillis)));
+                    getFormattedMonthDay(dateInMillis)));
         } else if ( julianDay < currentJulianDay + 7 ) {
             // If the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
         } else {
             // Otherwise, use the form "Mon Jun 3"
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd", Locale.US);
             return shortenedDateFormat.format(dateInMillis);
         }
     }
@@ -105,7 +101,7 @@ public class Utility {
      *
      * @param context Context to use for resource localization
      * @param dateInMillis The date in milliseconds
-     * @return
+     * @return SimpleDateFormat
      */
     public static String getDayName(Context context, long dateInMillis) {
         // If the date is today, return the localized version of "Today" instead of the actual
@@ -123,25 +119,22 @@ public class Utility {
             Time time = new Time();
             time.setToNow();
             // Otherwise, the format is just the day of the week (e.g "Wednesday".
-            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
             return dayFormat.format(dateInMillis);
         }
     }
 
     /**
      * Converts db date format to the format "Month day", e.g "June 24".
-     * @param context Context to use for resource localization
      * @param dateInMillis The db formatted date string, expected to be of the form specified
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    public static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    public static String getFormattedMonthDay(long dateInMillis) {
         Time time = new Time();
         time.setToNow();
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
-        SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
-        String monthDayString = monthDayFormat.format(dateInMillis);
-        return monthDayString;
+        SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd", Locale.US);
+        return monthDayFormat.format(dateInMillis);
     }
 
     public static String getFormattedWind(Context context, float windSpeed, float degrees) {

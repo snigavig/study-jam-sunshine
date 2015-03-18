@@ -1,8 +1,6 @@
 package com.goodcodeforfun.sunshine;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -22,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.goodcodeforfun.sunshine.data.WeatherContract;
-import com.goodcodeforfun.sunshine.sync.SunshineSyncAdapter;
 
 import java.util.ArrayList;
 
@@ -36,8 +33,6 @@ import static android.widget.Toast.makeText;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private ListView mListView;
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
     private int mPosition = ListView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
     private static final int LOADER_ID = 0;
@@ -63,12 +58,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    static final int COL_WEATHER_ID = 0;
     static final int COL_WEATHER_DATE = 1;
     static final int COL_WEATHER_DESC = 2;
     static final int COL_WEATHER_MAX_TEMP = 3;
     static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
     static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
@@ -95,11 +88,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        if (id == R.id.action_refresh) {
-            runFetchTask();
-            return true;
-        }
 
         if (id == R.id.action_show_map) {
             showMap();
@@ -165,24 +153,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
-
-    public void runFetchTask() {
-
-//        //FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-//        String location = Utility.getPreferredLocation(getActivity());
-//        //weatherTask.execute(location);
-//
-//        alarmMgr = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-//        Intent pendingIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
-//        pendingIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, location);
-//        alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, pendingIntent, PendingIntent.FLAG_ONE_SHOT);
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 5000, alarmIntent);
-        SunshineSyncAdapter.syncImmediately(getActivity());
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String locationSetting = Utility.getPreferredLocation(getActivity());
@@ -217,11 +187,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (arrayAdapterForecast != null) {
             arrayAdapterForecast.setUseTodayLayout(mUseTodayLayout);
         }
-    }
-
-    void onLocationChanged( ) {
-        runFetchTask();
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     @Override

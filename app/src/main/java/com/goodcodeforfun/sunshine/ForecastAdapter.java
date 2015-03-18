@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static com.goodcodeforfun.sunshine.Utility.formatTemperature;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -37,28 +39,6 @@ public class ForecastAdapter extends CursorAdapter {
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-    }
-
-    /**
-     * Prepare the weather high/lows for presentation.
-     */
-    private String formatHighLows(double high, double low) {
-        return Utility.formatTemperature(mContext, high) + "/" + Utility.formatTemperature(mContext, low);
-    }
-
-    /*
-        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
-        string.
-     */
-    private String convertCursorRowToUXFormat(Cursor cursor) {
-
-        String highAndLow = formatHighLows(
-                cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
-                cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
-
-        return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)) +
-                " - " + cursor.getString(ForecastFragment.COL_WEATHER_DESC) +
-                " - " + highAndLow;
     }
 
     /*
@@ -110,11 +90,11 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        viewHolder.highTempView.setText(Utility.formatTemperature(context, high));
+        viewHolder.highTempView.setText(formatTemperature(context, high));
 
         // Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        viewHolder.lowTempView.setText(Utility.formatTemperature(context, low));
+        viewHolder.lowTempView.setText(formatTemperature(context, low));
 
     }
 
