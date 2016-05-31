@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.goodcodeforfun.sunshine.data.WeatherContract;
 
@@ -31,8 +32,9 @@ import static android.widget.Toast.makeText;
  * A forecast fragment containing a simple view.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private ListView mListView;
+    private TextView mEmptyView;
     private int mPosition = ListView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
     private static final int LOADER_ID = 0;
@@ -73,10 +75,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private boolean mUseTodayLayout;
 
     public interface Callback {
-         /**
+        /**
          * DetailFragmentCallback for when an item has been selected.
          */
-         public void onItemSelected(Uri dateUri);
+        public void onItemSelected(Uri dateUri);
     }
 
     public ForecastFragment() {
@@ -116,7 +118,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -125,6 +126,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         arrayAdapterForecast = new ForecastAdapter(getActivity(), null, 0);
 
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mEmptyView = (TextView) rootView.findViewById(R.id.empty_view);
+        mListView.setEmptyView(mEmptyView);
         mListView.setAdapter(arrayAdapterForecast);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -175,6 +178,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             // to, do so now.
             mListView.smoothScrollToPosition(mPosition);
         }
+        updateEmptyView();
+    }
+
+    private void updateEmptyView() {
+        if (arrayAdapterForecast.getCount() == 0) {
+            if(null != mEmptyView) {
+                int message = R.string.no_data;
+                if (!Utility.isNetworkAvailable(getActivity())) {
+                    message = R.string.no_data_no_network;
+                }
+                mEmptyView.setText(message);
+            }
+        }
     }
 
     @Override
@@ -202,9 +218,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     public void showMap() {
-        if ( null != arrayAdapterForecast ) {
+        if (null != arrayAdapterForecast) {
             Cursor c = arrayAdapterForecast.getCursor();
-            if ( null != c ) {
+            if (null != c) {
                 c.moveToPosition(0);
                 String locationLat = c.getString(COL_COORD_LAT);
                 String locationLon = c.getString(COL_COORD_LONG);

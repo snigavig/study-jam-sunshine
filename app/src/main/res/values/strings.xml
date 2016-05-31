@@ -2,7 +2,8 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
 
     <string name="app_name">Sunshine</string>
-    <string name="hello_world" translatable="false">Hello world!</string>
+    <string name="no_data">No weather information available</string>
+    <string name="no_data_no_network">No weather information available, the network is unreachable at the moment</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="forecastDummyList" translatable="false">
